@@ -28,7 +28,7 @@ def parse_args():
         'cards',
         help='Lists the cards you have',
     )
-    cards_parser.set_defaults(func=list_cards)
+    cards_parser.set_defaults(func=list_card)
 
     add_card_parser = main_parser.subparsers.add_parser(
         'add',
@@ -36,12 +36,19 @@ def parse_args():
     )
     add_card_parser.add_argument('title')
     add_card_parser.add_argument('-n', '--number', type=int, dest='num', default=1)
+    add_card_parser.add_argument('-f', '--force', action='store_true', dest='force', default=False)
+    add_card_parser.add_argument('-n', '--no-input', action='store_true', dest='force', default=False)
     add_card_parser.set_defaults(func=add_card)
 
     return main_parser.parse_args()
 
 
 if __name__ == '__main__':
-    args = parse_args()
+    print NameE
+    try:
+        args = parse_args()
+    except BaseException as err:
+        print err.__class__
+
     args.func(args)
 
