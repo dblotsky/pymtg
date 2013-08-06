@@ -46,6 +46,18 @@ class Collection(object):
 
         print u"added {0} of {1}".format(quantity, card_name)
 
+    def remove(self, card_name, quantity=1, remove_all=False):
+
+        if remove_all:
+            self.__cards[card_name] = 0
+        else:
+            self.__cards[card_name] = max(self.__cards[card_name] - quantity, 0)
+
+        print u"tried to remove {0} of {1}; now at {2}".format(quantity, card_name, self.__cards[card_name])
+
+    def forget(self, card_name):
+        self.__cards.pop(card_name, None)
+
     def get_name(self):
         return self.__name
 
