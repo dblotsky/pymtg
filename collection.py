@@ -5,7 +5,7 @@ class Collection(object):
     A Magic: The Gathering card collection.
     """
 
-    def __init__(self, library, name=u"Unnamed Collection", cards=None):
+    def __init__(self, library, name, cards=None):
 
         self.__name    = name
         self.__library = library
@@ -30,12 +30,16 @@ class Collection(object):
 
         # create the format string
         format_string = ""
+        format_string += "\n"
         format_string += "Collection: {name}\n"
         format_string += "Card Count: {num}\n"
-        format_string += "Colour Graph:\n"
+        format_string += "\n"
+        format_string += "Card Colour Graph:\n"
         format_string += "{colours}\n"
+        format_string += "\n"
         format_string += "Card List:\n"
         format_string += "{cards}"
+        format_string += "\n"
 
         # format the output
         return format_string.format(
@@ -52,16 +56,12 @@ class Collection(object):
         else:
             self.__cards[card_name] = quantity
 
-        print u"added {0} of {1}".format(quantity, card_name)
-
     def remove(self, card_name, quantity=1, remove_all=False):
 
         if remove_all:
             self.__cards[card_name] = 0
         else:
             self.__cards[card_name] = max(self.__cards[card_name] - quantity, 0)
-
-        print u"tried to remove {0} of {1}; now at {2}".format(quantity, card_name, self.__cards[card_name])
 
     def forget(self, card_name):
         self.__cards.pop(card_name, None)
@@ -89,7 +89,7 @@ class Collection(object):
 
         # get all cards as strings
         cards_as_strings = []
-        for card_name, card_quantity in self.get_cards_with_quantities().items():
+        for card_name, card_quantity in sorted(self.get_cards_with_quantities().items()):
             cards_as_strings.append(u"    {quantity:<3} {card}".format(quantity=card_quantity, card=self.get_library().lookup(card_name)))
 
         return u"\n".join(cards_as_strings)

@@ -2,12 +2,20 @@
 
 import argparse
 import difflib
+import os
 
+from subprocess import call
+from collection import Collection
 from transaction import Transaction
 
 # config
 SIMILARITY      = 0.6
 MAX_NUM_MATCHES = 100
+
+PROGRAM_DESCRIPTION = """
+This program is a command-line tool to manage Magic: The Gathering card collections and decks.
+It can keep track of several collections and supports adding and removing cards.
+"""
 
 def list_cards(args, context):
     print context.get_collection()
@@ -146,87 +154,111 @@ def remove_card(args, context):
         else:
             context.get_collection().remove(card_name, card_quantity, remove_all=args.remove_all)
 
-def parse_args():
-    main_parser = argparse.ArgumentParser(
-        description="""
-            This program is a command-line tool to manage Magic: The Gathering card collections and decks.
-            It can keep track of several collections and supports adding and removing cards.
-        """,
-    )
-    main_parser.subparsers = main_parser.add_subparsers(
-        title='commands',
-    )
+def add_collection(args, context):
 
-    help_parser = main_parser.subparsers.add_parser(
-        'help',
-        help='Show this help message',
-    )
+    new_collection_title = args.new_collection_name
+    new_collection_file = "data/collections/" + new_collection_title + ".mtgcollection"
+
+    # check if the collection already exists
+    try:
+        with open(new_collection_file, "r") as f:
+            print "Collection already exists."
+        return
+
+    except IOError:
+        pass
+
+    # create the new collection file
+    call(["touch", new_collection_file])
+
+    # relink the default collection file
+    relink_default_collection(args, context, new_collection_title)
+
+    # create the collection itself
+    new_collection = Collection(None, new_collection_title)
+    context.set_collection(new_collection)
+
+def relink_default_collection(args, context, new_collection):
+    """
+    Switches the default.mtgcollection symlink to point to the specified collection.
+    """
+
+    path_prefix         = "data/collections/"
+    new_collection_path = "{pwd}/{prefix}/{name}.mtgcollection".format(pwd=os.getcwd(), prefix=path_prefix, name=new_collection)
+
+    # check if the collection exists
+    try:
+        with open(new_collection_path, "r") as f:
+            pass
+
+    except IOError:
+        print "Collection doesn't exist."
+        return
+
+    # reset the context so that it doesn't write the old collection to the new file
+    context.reset()
+
+    # re-link the default collection
+    call([
+        "ln", "-s", "-f",
+        new_collection_path,
+        path_prefix + "default.mtgcollection"
+    ])
+
+def switch_collection(args, context):
+
+    relink_default_collection(args, context, args.new_collection_name)
+
+def parse_args():
+
+    # main
+    main_parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
+    main_parser.subparsers = main_parser.add_subparsers(title='commands')
+
+    # help
+    help_parser = main_parser.subparsers.add_parser('help', help='Show this help message')
     help_parser.set_defaults(func=lambda args, context: main_parser.print_help())
 
-    cards_parser = main_parser.subparsers.add_parser(
-        'cards',
-        help='Lists the cards you have',
-    )
+    # cards
+    cards_parser = main_parser.subparsers.add_parser('cards', help='Lists the cards you have')
     cards_parser.set_defaults(func=list_cards)
-    status_parser = main_parser.subparsers.add_parser(
-        'status',
-        help="Synonym for `mtg cards`"
-    )
+
+    # status
+    status_parser = main_parser.subparsers.add_parser('status', help="Synonym for 'mtg cards'")
     status_parser.set_defaults(func=list_cards)
 
-    add_card_parser = main_parser.subparsers.add_parser(
-        'add',
-        help='Adds a new card',
-    )
+    # create-collection
+    init_parser = main_parser.subparsers.add_parser('init', help="Creates a collection")
+    init_parser.add_argument('new_collection_name', metavar='collection_name')
+    init_parser.set_defaults(func=add_collection)
+
+    # switch
+    switch_parser = main_parser.subparsers.add_parser('switch', help="Switched collections")
+    switch_parser.add_argument('new_collection_name', metavar='collection_name')
+    switch_parser.set_defaults(func=switch_collection)
+
+    # add
+    add_card_parser = main_parser.subparsers.add_parser('add', help='Adds a new card')
     add_card_parser.add_argument('title', metavar='card_name')
-    add_card_parser.add_argument(
-        '-n', '--number',
-        type=int, dest='num', default=1,
-        help="How many cards to add (Default: 1)",
-    )
-    add_card_parser.add_argument(
-        '-f', '--force',
-        action='store_true', dest='force', default=False,
-        help="Add the card, even if we don't find it in the library",
-    )
-    add_card_parser.add_argument(
-        '--no-input',
-        action='store_true', dest='no_input', default=False,
-        help="Add the card, only if we find an exact match, never prompting the user",
-    )
+    add_card_parser.add_argument('-n', '--number',   type=int,            dest='num',      default=1,     help="How many cards to add (Default: 1)")
+    add_card_parser.add_argument('-f', '--force',    action='store_true', dest='force',    default=False, help="Add the card, even if we don't find it in the library")
+    add_card_parser.add_argument('-q', '--no-input', action='store_true', dest='no_input', default=False, help="Add the card, only if we find an exact match, never prompting the user")
     add_card_parser.set_defaults(func=add_card)
 
-    remove_card_parser = main_parser.subparsers.add_parser(
-        'remove',
-        help='Removes cards from your collection',
-    )
+    # remove
+    remove_card_parser = main_parser.subparsers.add_parser('remove', help='Removes cards from your collection',)
     remove_card_parser.add_argument('title', metavar='card_name')
-    remove_card_parser.add_argument(
-        '-a', '--all',
-        action='store_true', dest='remove_all', default=False,
-        help="Remove all copies of the card",
-    )
-    remove_card_parser.add_argument(
-        '-n', '--number',
-        type=int, dest='num', default=1,
-        help="How many cards to remove (Default: 1)",
-    )
-    remove_card_parser.add_argument(
-        '-f', '--force', '--forget',
-        action='store_true', dest='force', default=False,
-        help="Remove the card from the collection, forgetting it entirely",
-    )
-    remove_card_parser.add_argument(
-        '--no-input',
-        action='store_true', dest='no_input', default=False,
-        help="Remove some copies of the card, only if we find an exact match, never prompting the user",
-    )
+    remove_card_parser.add_argument('-a', '--all',               action='store_true', dest='remove_all', default=False, help="Remove all copies of the card")
+    remove_card_parser.add_argument('-n', '--number',            type=int,            dest='num',        default=1,     help="How many cards to remove (Default: 1)")
+    remove_card_parser.add_argument('-f', '--force', '--forget', action='store_true', dest='force',      default=False, help="Remove the card from the collection, forgetting it entirely")
+    remove_card_parser.add_argument('-q', '--no-input',          action='store_true', dest='no_input',   default=False, help="Remove some copies of the card, only if we find an exact match, never prompting the user")
     remove_card_parser.set_defaults(func=remove_card)
 
     return main_parser.parse_args()
 
 
 def main():
+
     # parse the args and find which command to run
     args = parse_args()
 
