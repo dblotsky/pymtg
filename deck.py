@@ -1,5 +1,7 @@
 class Deck(object):
-    """A deck of cards."""
+    """
+    A deck of cards.
+    """
 
     def __init__(self, name="Unnamed Deck", cards=[]):
 
