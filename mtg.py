@@ -128,12 +128,14 @@ def parse_args():
     )
     add_card_parser.add_argument('title')
     add_card_parser.add_argument('-n', '--number', type=int, dest='num', default=1)
+    add_card_parser.add_argument('-f', '--force', action='store_true', dest='force', default=False)
+    add_card_parser.add_argument('--no-input', action='store_true', dest='no_input', default=False)
     add_card_parser.set_defaults(func=add_card)
 
     return main_parser.parse_args()
 
-def main():
 
+def main():
     # parse the args and find which command to run
     args = parse_args()
 
