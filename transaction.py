@@ -2,32 +2,21 @@ import json
 
 from collection import Collection
 from card import Card
+from library import Library
 
 class Transaction(object):
 
     def __init__(self):
 
-        self.__collection = None
-        self.__card_library  = None
+        self.__collection   = None
+        self.__card_library = None
 
     def get_card_library(self):
 
         if self.__card_library is None:
 
-            with open("data/AllSets.json") as library_file:
-                library_json = json.loads(library_file.read())
-
-            # retrieve just the cards
-            cards = []
-            for card_set in library_json.values():
-                cards.extend(card_set["cards"])
-
-            # map the cards to themselves
-            self.__card_library = {}
-            for card in cards:
-
-                card_name = card["name"]
-                self.__card_library[card_name] = Card(card_name, card)
+            self.__card_library = Library("data/AllSets.json")
+            self.__card_library.load()
 
         return self.__card_library
 
@@ -48,14 +37,14 @@ class Transaction(object):
         for name, quantity in collection_as_json["cards"].items():
             collection_cards[name] = quantity
 
-        self.__collection = Collection(name=collection_name, cards=collection_cards)
+        self.__collection = Collection(library=self.get_card_library(), name=collection_name, cards=collection_cards)
 
     def save(self):
 
         # serialise the data
         output_dict = {
             "name": self.__collection.get_name(),
-            "cards": self.__collection.get_cards(),
+            "cards": self.__collection.get_cards_with_quantities(),
         }
         collection_as_json = json.dumps(output_dict, indent=4)
 

@@ -5,9 +5,10 @@ class Card(object):
     A Magic: The Gathering card.
     """
 
-    def __init__(self, name, extra_data=None):
+    def __init__(self, name, colors, extra_data=None):
 
-        self.__name = name
+        self.__name   = name
+        self.__colors = colors
 
         if extra_data is None:
             extra_data = {}
@@ -18,3 +19,6 @@ class Card(object):
 
     def get_extra_data(self):
         return self.__extra_data
+
+    def get_colors(self):
+        return self.__colors

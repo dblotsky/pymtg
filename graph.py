@@ -1,8 +1,11 @@
-from collections import namedtuple
-
 CHAR_LIMIT = 60.0
 
 def bar_graph(bars):
+
+    if len(bars) == 0:
+        return "No data."
+
+    print bars
 
     # Figure out the highest value
     value_max = 0

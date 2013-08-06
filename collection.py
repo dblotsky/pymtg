@@ -5,11 +5,10 @@ class Collection(object):
     A Magic: The Gathering card collection.
     """
 
-    def __init__(self, name=u"Unnamed Collection", cards=None):
+    def __init__(self, library, name=u"Unnamed Collection", cards=None):
 
-        super(Collection, self).__init__()
-
-        self.__name = name
+        self.__name    = name
+        self.__library = library
 
         if cards is None:
             cards = {}
@@ -23,8 +22,14 @@ class Collection(object):
 
     def __unicode__(self):
 
-        format_string = ""
+        # get color graph
+        graph_string = bar_graph(self.get_colour_distribution())
 
+        # indent every line in the graph
+        graph_string = "\n".join(map(lambda x: "    " + x, graph_string.split("\n")))
+
+        # create the format string
+        format_string = ""
         format_string += "Collection: {name}\n"
         format_string += "Card Count: {num}\n"
         format_string += "Colour Graph:\n"
@@ -32,14 +37,13 @@ class Collection(object):
         format_string += "Card List:\n"
         format_string += "{cards}"
 
+        # format the output
         return format_string.format(
             name=self.get_name(),
-            num=sum(self.get_cards().values()),
-            colours=bar_graph(self.get_colour_distribution()),
+            num=sum(self.__cards.values()),
+            colours=graph_string,
             cards=self.get_card_list()
         )
-
-        return return_string
 
     def add(self, card_name, quantity=1):
 
@@ -64,11 +68,11 @@ class Collection(object):
 
     def get_colour_distribution(self):
 
-        histogram    = {}
+        histogram = {}
 
         for card_name in self.get_cards():
 
-            colors = card_library[card_name].
+            colors = self.__library.lookup(card_name).get_colors()
 
             for color in colors:
                 if color in histogram:
@@ -95,4 +99,7 @@ class Collection(object):
         return self.__name
 
     def get_cards(self):
+        return self.__cards.keys()
+
+    def get_cards_with_quantities(self):
         return self.__cards
