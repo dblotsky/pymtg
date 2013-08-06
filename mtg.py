@@ -55,9 +55,9 @@ def prompt_user(question):
 
     while True:
 
-        answer = raw_input(question + u" [Y/n]: ")
+        answer = raw_input(question + u" [y/n]: ").lower()
 
-        if answer == "Y":
+        if answer == "y":
             return True
         elif answer == "n":
             return False
@@ -149,7 +149,6 @@ def remove_card(args, context):
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
-        usage='mtg [options]',
         description="""
             This program is a command-line tool to manage Magic: The Gathering card collections and decks.
             It can keep track of several collections and supports adding and removing cards.
@@ -180,7 +179,7 @@ def parse_args():
         'add',
         help='Adds a new card',
     )
-    add_card_parser.add_argument('title')
+    add_card_parser.add_argument('title', metavar='card_name')
     add_card_parser.add_argument(
         '-n', '--number',
         type=int, dest='num', default=1,
@@ -202,7 +201,7 @@ def parse_args():
         'remove',
         help='Removes cards from your collection',
     )
-    remove_card_parser.add_argument('title')
+    remove_card_parser.add_argument('title', metavar='card_name')
     remove_card_parser.add_argument(
         '-a', '--all',
         action='store_true', dest='remove_all', default=False,
