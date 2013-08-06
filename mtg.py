@@ -2,12 +2,13 @@
 
 import argparse
 
-def list_cards(args):
-    print 'Indestructability: 1'
-    print 'Fortuous Awesome: 3'
+from transaction import Transaction
 
-def add_card(args):
-    print 'add card'
+def list_cards(args, context):
+    print context.collection
+
+def add_card(args, context):
+    context.collection.add("Indesctuctibility", args.num)
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
@@ -39,8 +40,16 @@ def parse_args():
 
     return main_parser.parse_args()
 
+def main():
+
+    # parse the args and find which command to run
+    args = parse_args()
+
+    # get the local data
+    with Transaction() as context:
+
+        # run the command
+        args.func(args, context)
 
 if __name__ == '__main__':
-    args = parse_args()
-    args.func(args)
-
+    main()
