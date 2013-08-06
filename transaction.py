@@ -6,11 +6,28 @@ class Transaction(object):
 
     def __init__(self):
 
-        self.collection = None
+        self.__collection = None
+        self.__card_library  = None
+
+    def get_card_library(self):
+
+        if self.__card_library is None:
+            self.__card_library = {
+                "Lol": 3,
+                "Indes": 3,
+                "Loladasd": 3,
+                "Fleeng": 3,
+            }
+            # with open()
+
+        return self.__card_library
+
+    def get_collection(self):
+        return self.__collection
 
     def load(self):
 
-        # read the file
+        # read the files
         with open("data/collections/default.mtgcollection", "r") as collection_file:
             collection_as_json = json.loads(collection_file.read())
 
@@ -22,14 +39,14 @@ class Transaction(object):
         for name, quantity in collection_as_json["cards"].items():
             collection_cards[name] = quantity
 
-        self.collection = Collection(name=collection_name, cards=collection_cards)
+        self.__collection = Collection(name=collection_name, cards=collection_cards)
 
     def save(self):
 
         # serialise the data
         output_dict = {
-            "name": self.collection.get_name(),
-            "cards": self.collection.get_cards(),
+            "name": self.__collection.get_name(),
+            "cards": self.__collection.get_cards(),
         }
         collection_as_json = json.dumps(output_dict, indent=4)
 
