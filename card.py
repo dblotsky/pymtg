@@ -22,3 +22,6 @@ class Card(object):
 
     def get_colors(self):
         return self.__colors
+
+    def __unicode__(self):
+        return "{name}".format(name=self.get_name())

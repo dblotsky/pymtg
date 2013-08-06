@@ -1,15 +1,23 @@
 CHAR_LIMIT = 60.0
 
-def bar_graph(bars):
+def bar_graph(bars_dict):
 
-    if len(bars) == 0:
+    if len(bars_dict) == 0:
         return "No data."
-
-    print bars
 
     # Figure out the highest value
     value_max = 0
     prefix_max = 0
+
+    bars = []
+    for name, num in bars_dict.items():
+        bars.append({
+            'name': name,
+            'num': num,
+        })
+
+    # find the longest bar name
+    longest_bar_name = max((len(bar['name']) for bar in bars))
 
     for bar in bars:
 
@@ -17,7 +25,7 @@ def bar_graph(bars):
         name = bar['name']
         size = int(bar['num'])
 
-        bar['prefix'] = '{name}: {size} '.format(
+        bar['prefix'] = ('{name:' + str(longest_bar_name) + '} {size:4} ').format(
             name=name,
             size=size,
         )
@@ -37,6 +45,7 @@ def bar_graph(bars):
 
     output_bars = []
     for bar in bars:
+
         # Pad the line
         line = bar['prefix'] + ' ' * (prefix_max - len(bar['prefix']))
 

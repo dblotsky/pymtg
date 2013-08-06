@@ -88,7 +88,7 @@ def find_card(name, context, should_search_lib=True, no_input=False):
     # first check collection
     if still_searching:
 
-        chosen_name = fuzzy_search(name, context.get_collection().get_cards(), no_input=no_input)
+        chosen_name = fuzzy_search(name, context.get_collection().get_card_names(), no_input=no_input)
 
         if chosen_name is not None:
             still_searching = False
@@ -99,7 +99,7 @@ def find_card(name, context, should_search_lib=True, no_input=False):
         if (not no_input) and prompt_user(u"Card not found in collection. Do you want to escalate the search to the MTG library?") is False:
             return
 
-        chosen_name = fuzzy_search(name, context.get_card_library().get_cards(), no_input=no_input)
+        chosen_name = fuzzy_search(name, context.get_card_library().get_card_names(), no_input=no_input)
 
         if chosen_name is not None:
             still_searching = False

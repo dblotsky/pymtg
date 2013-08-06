@@ -38,5 +38,5 @@ class Library(object):
     def lookup(self, name):
         return self.__cards[name]
 
-    def get_cards(self):
+    def get_card_names(self):
         return self.__cards.keys()

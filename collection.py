@@ -70,13 +70,13 @@ class Collection(object):
 
         histogram = {}
 
-        for card_name in self.get_cards():
+        for card_name in self.get_card_names():
 
             colors = self.__library.lookup(card_name).get_colors()
 
             for color in colors:
                 if color in histogram:
-                    histogram[color] += 1
+                    histogram[color] += self.count(card_name)
                 else:
                     histogram[color] = 1
 
@@ -84,22 +84,30 @@ class Collection(object):
 
     def get_card_list(self):
 
-        if len(self.__cards) == 0:
+        if self.count_cards() == 0:
             return u"    No cards."
 
+        # get all cards as strings
         cards_as_strings = []
-
-        # format the cards
-        for card_name, card_quantity in self.__cards.items():
-            cards_as_strings.append(u"    {name}: {quantity}".format(name=card_name, quantity=card_quantity))
+        for card_name, card_quantity in self.get_cards_with_quantities().items():
+            cards_as_strings.append(u"    {quantity:<3} {card}".format(quantity=card_quantity, card=self.get_library().lookup(card_name)))
 
         return u"\n".join(cards_as_strings)
+
+    def count_cards(self):
+        return len(self.get_card_names())
 
     def get_name(self):
         return self.__name
 
-    def get_cards(self):
+    def get_card_names(self):
         return self.__cards.keys()
 
     def get_cards_with_quantities(self):
         return self.__cards
+
+    def count(self, card_name):
+        return self.__cards[card_name]
+
+    def get_library(self):
+        return self.__library
