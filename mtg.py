@@ -2,16 +2,12 @@
 
 import argparse
 
-
-
 def list_cards(args):
     print 'Indestructability: 1'
     print 'Fortuous Awesome: 3'
 
 def add_card(args):
     print 'add card'
-    print args
-
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
@@ -42,7 +38,6 @@ def parse_args():
     add_card_parser.set_defaults(func=add_card)
 
     return main_parser.parse_args()
-
 
 
 if __name__ == '__main__':
