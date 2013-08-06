@@ -46,6 +46,15 @@ class Collection(object):
 
         print u"added {0} of {1}".format(quantity, card_name)
 
+    def remove(self, card_name, quantity=1):
+
+        if card_name in self.__cards:
+            self.__cards[card_name] += quantity
+        else:
+            self.__cards[card_name] = quantity
+
+        print u"added {0} of {1}".format(quantity, card_name)
+
     def get_name(self):
         return self.__name
 
