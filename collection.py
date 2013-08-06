@@ -1,3 +1,5 @@
+from graph import bar_graph
+
 class Collection(object):
     """
     A Magic: The Gathering card collection.
@@ -33,8 +35,7 @@ class Collection(object):
         return format_string.format(
             name=self.get_name(),
             num=sum(self.get_cards().values()),
-            #colours=graph(self.get_colour_distribution()),
-            colours="    No Graph.",
+            colours=bar_graph(self.get_colour_distribution()),
             cards=self.get_card_list()
         )
 
@@ -63,11 +64,11 @@ class Collection(object):
 
     def get_colour_distribution(self):
 
-        histogram = {}
+        histogram    = {}
 
-        for card in self.get_cards():
+        for card_name in self.get_cards():
 
-            colors = card.get_extra_data("color")
+            colors = card_library[card_name].
 
             for color in colors:
                 if color in histogram:

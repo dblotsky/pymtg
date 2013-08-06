@@ -1,13 +1,15 @@
 from collections import namedtuple
 
-
 CHAR_LIMIT = 60.0
 
-def graph(bars):
+def bar_graph(bars):
+
     # Figure out the highest value
     value_max = 0
     prefix_max = 0
+
     for bar in bars:
+
         # Create the prefix for ever bar in the graph
         name = bar['name']
         size = int(bar['num'])
