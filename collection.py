@@ -21,19 +21,22 @@ class Collection(object):
 
     def __unicode__(self):
 
-        return_string = u"Cards in {name}:\n".format(name=self.get_name())
+        format_string = ""
 
-        if len(self.__cards) == 0:
-            return_string += u"No cards."
+        format_string += "Collection: {name}\n"
+        format_string += "Card Count: {num}\n"
+        format_string += "Colour Graph:\n"
+        format_string += "{colours}\n"
+        format_string += "Card List:\n"
+        format_string += "{cards}"
 
-        else:
-            cards_as_strings = []
-
-            # format the cards
-            for card_name, card_quantity in self.__cards.items():
-                cards_as_strings.append(u"    {name}: {quantity}".format(name=card_name, quantity=card_quantity))
-
-            return_string += u"\n".join(cards_as_strings)
+        return format_string.format(
+            name=self.get_name(),
+            num=sum(self.get_cards().values()),
+            #colours=graph(self.get_colour_distribution()),
+            colours="    No Graph.",
+            cards=self.get_card_list()
+        )
 
         return return_string
 
@@ -57,6 +60,35 @@ class Collection(object):
 
     def forget(self, card_name):
         self.__cards.pop(card_name, None)
+
+    def get_colour_distribution(self):
+
+        histogram = {}
+
+        for card in self.get_cards():
+
+            colors = card.get_extra_data("color")
+
+            for color in colors:
+                if color in histogram:
+                    histogram[color] += 1
+                else:
+                    histogram[color] = 1
+
+        return histogram
+
+    def get_card_list(self):
+
+        if len(self.__cards) == 0:
+            return u"    No cards."
+
+        cards_as_strings = []
+
+        # format the cards
+        for card_name, card_quantity in self.__cards.items():
+            cards_as_strings.append(u"    {name}: {quantity}".format(name=card_name, quantity=card_quantity))
+
+        return u"\n".join(cards_as_strings)
 
     def get_name(self):
         return self.__name
