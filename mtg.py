@@ -150,7 +150,10 @@ def remove_card(args, context):
 def parse_args():
     main_parser = argparse.ArgumentParser(
         usage='mtg [options]',
-        description='TODO Description here',
+        description="""
+            This program is a command-line tool to manage Magic: The Gathering card collections and decks.
+            It can keep track of several collections and supports adding and removing cards.
+        """,
     )
     main_parser.subparsers = main_parser.add_subparsers(
         title='commands',
