@@ -130,7 +130,7 @@ def remove_card(args, context):
     else:
 
         # add the card
-        context.get_collection().remove(card_name, card_quantity)
+        context.get_collection().remove(card_name, card_quantity, args.remove_all)
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
@@ -162,6 +162,17 @@ def parse_args():
     add_card_parser.add_argument('-f', '--force', action='store_true', dest='force', default=False)
     add_card_parser.add_argument('--no-input', action='store_true', dest='no_input', default=False)
     add_card_parser.set_defaults(func=add_card)
+
+    remove_card_parser = main_parser.subparsers.add_parser(
+        'remove',
+        help='Removes cards from your collection',
+    )
+    remove_card_parser.add_argument('title')
+    remove_card_parser.add_argument('-a', '--all', action='store_true', dest='remove_all', default=False)
+    remove_card_parser.add_argument('-n', '--number', type=int, dest='num', default=1)
+    remove_card_parser.add_argument('-f', '--force', action='store_true', dest='force', default=False)
+    remove_card_parser.add_argument('--no-input', action='store_true', dest='no_input', default=False)
+    remove_card_parser.set_defaults(func=remove_card)
 
     return main_parser.parse_args()
 
