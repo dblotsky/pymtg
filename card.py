@@ -5,11 +5,13 @@ class Card(object):
     A Magic: The Gathering card.
     """
 
-    def __init__(self, json_data):
-        self.json_data = json_data
+    def __init__(self, name, cost):
 
-    def __getattr__(self, attr_name):
-        return self.json_data[attr_name]
+        self.name = name
+        self.cost = cost
 
-    def __setattr__(self, attr_name, value):
-        return self.json_data[attr_name] = value
+    def get_name(self):
+        return self.name
+
+    def get_cost(self):
+        return self.cost
