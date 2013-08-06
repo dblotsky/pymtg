@@ -152,15 +152,32 @@ def parse_args():
         help='Lists the cards you have',
     )
     cards_parser.set_defaults(func=list_cards)
+    status_parser = main_parser.subparsers.add_parser(
+        'status',
+        help="Synonym for `mtg cards`"
+    )
+    status_parser.set_defaults(func=list_cards)
 
     add_card_parser = main_parser.subparsers.add_parser(
         'add',
         help='Adds a new card',
     )
     add_card_parser.add_argument('title')
-    add_card_parser.add_argument('-n', '--number', type=int, dest='num', default=1)
-    add_card_parser.add_argument('-f', '--force', action='store_true', dest='force', default=False)
-    add_card_parser.add_argument('--no-input', action='store_true', dest='no_input', default=False)
+    add_card_parser.add_argument(
+        '-n', '--number',
+        type=int, dest='num', default=1,
+        help="How many cards to add (Default: 1)",
+    )
+    add_card_parser.add_argument(
+        '-f', '--force',
+        action='store_true', dest='force', default=False,
+        help="Add the card, even if we don't find it in the library",
+    )
+    add_card_parser.add_argument(
+        '--no-input',
+        action='store_true', dest='no_input', default=False,
+        help="Add the card, only if we find an exact match, never prompting the user",
+    )
     add_card_parser.set_defaults(func=add_card)
 
     remove_card_parser = main_parser.subparsers.add_parser(
@@ -168,10 +185,26 @@ def parse_args():
         help='Removes cards from your collection',
     )
     remove_card_parser.add_argument('title')
-    remove_card_parser.add_argument('-a', '--all', action='store_true', dest='remove_all', default=False)
-    remove_card_parser.add_argument('-n', '--number', type=int, dest='num', default=1)
-    remove_card_parser.add_argument('-f', '--force', action='store_true', dest='force', default=False)
-    remove_card_parser.add_argument('--no-input', action='store_true', dest='no_input', default=False)
+    remove_card_parser.add_argument(
+        '-a', '--all',
+        action='store_true', dest='remove_all', default=False,
+        help="Remove all copies of the card",
+    )
+    remove_card_parser.add_argument(
+        '-n', '--number',
+        type=int, dest='num', default=1,
+        help="How many cards to remove (Default: 1)",
+    )
+    remove_card_parser.add_argument(
+        '-f', '--force', '--forget',
+        action='store_true', dest='force', default=False,
+        help="Remove the card from the collection, forgetting it entirely",
+    )
+    remove_card_parser.add_argument(
+        '--no-input',
+        action='store_true', dest='no_input', default=False,
+        help="Remove some copies of the card, only if we find an exact match, never prompting the user",
+    )
     remove_card_parser.set_defaults(func=remove_card)
 
     return main_parser.parse_args()
