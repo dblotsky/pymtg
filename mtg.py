@@ -15,9 +15,18 @@ def add_card(args):
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
-        description='TODO',
+        usage='mtg [options]',
+        description='TODO Description here',
     )
-    main_parser.subparsers = main_parser.add_subparsers()
+    main_parser.subparsers = main_parser.add_subparsers(
+        title='commands',
+    )
+
+    help_parser = main_parser.subparsers.add_parser(
+        'help',
+        help='Show this help message',
+    )
+    help_parser.set_defaults(func=lambda args: main_parser.print_help())
 
     cards_parser = main_parser.subparsers.add_parser(
         'cards',
@@ -33,7 +42,6 @@ def parse_args():
     add_card_parser.set_defaults(func=add_card)
 
     return main_parser.parse_args()
-
 
 
 
