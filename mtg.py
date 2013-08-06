@@ -3,6 +3,7 @@
 import argparse
 import difflib
 import os
+import sys
 
 from subprocess import call
 from collection import Collection
@@ -207,38 +208,57 @@ def relink_default_collection(args, context, new_collection):
 
 def switch_collection(args, context):
 
+    new_collection_name = args.new_collection_name
+
+    if new_collection_name == "default":
+        print "Cannot switch default collection to default collection."
+        return
+
     relink_default_collection(args, context, args.new_collection_name)
+
+def list_collections(args, context):
+
+    print "Available collections:"
+
+    for collection in os.listdir("data/collections"):
+
+        if ".mtgcollection" in collection:
+            print "   {name}".format(name=collection.replace(".mtgcollection", ""))
 
 def parse_args():
 
     # main
-    main_parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
-    main_parser.subparsers = main_parser.add_subparsers(title='commands')
+    main_parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION, add_help=False)
+    subparsers = main_parser.add_subparsers()
 
     # help
-    help_parser = main_parser.subparsers.add_parser('help', help='Show this help message')
+    help_parser = subparsers.add_parser('help', help='Show this help message')
     help_parser.set_defaults(func=lambda args, context: main_parser.print_help())
 
     # cards
-    cards_parser = main_parser.subparsers.add_parser('cards', help='Lists the cards you have')
+    cards_parser = subparsers.add_parser('cards', help='Lists the cards you have')
     cards_parser.set_defaults(func=list_cards)
 
     # status
-    status_parser = main_parser.subparsers.add_parser('status', help="Synonym for 'mtg cards'")
+    status_parser = subparsers.add_parser('status', help="Synonym for 'mtg cards'")
     status_parser.set_defaults(func=list_cards)
 
+    # list
+    list_parser = subparsers.add_parser('list', help="List all available collections")
+    list_parser.set_defaults(func=list_collections)
+
     # create-collection
-    init_parser = main_parser.subparsers.add_parser('init', help="Creates a collection")
+    init_parser = subparsers.add_parser('init', help="Creates a collection")
     init_parser.add_argument('new_collection_name', metavar='collection_name')
     init_parser.set_defaults(func=add_collection)
 
     # switch
-    switch_parser = main_parser.subparsers.add_parser('switch', help="Switched collections")
+    switch_parser = subparsers.add_parser('switch', help="Switched collections")
     switch_parser.add_argument('new_collection_name', metavar='collection_name')
     switch_parser.set_defaults(func=switch_collection)
 
     # add
-    add_card_parser = main_parser.subparsers.add_parser('add', help='Adds a new card')
+    add_card_parser = subparsers.add_parser('add', help='Adds a new card')
     add_card_parser.add_argument('title', metavar='card_name')
     add_card_parser.add_argument('-n', '--number',   type=int,            dest='num',      default=1,     help="How many cards to add (Default: 1)")
     add_card_parser.add_argument('-f', '--force',    action='store_true', dest='force',    default=False, help="Add the card, even if we don't find it in the library")
@@ -246,7 +266,7 @@ def parse_args():
     add_card_parser.set_defaults(func=add_card)
 
     # remove
-    remove_card_parser = main_parser.subparsers.add_parser('remove', help='Removes cards from your collection',)
+    remove_card_parser = subparsers.add_parser('remove', help='Removes cards from your collection',)
     remove_card_parser.add_argument('title', metavar='card_name')
     remove_card_parser.add_argument('-a', '--all',               action='store_true', dest='remove_all', default=False, help="Remove all copies of the card")
     remove_card_parser.add_argument('-n', '--number',            type=int,            dest='num',        default=1,     help="How many cards to remove (Default: 1)")
