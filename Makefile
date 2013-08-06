@@ -9,8 +9,11 @@ data/AllSets.json data/AllSets-x.json:
 	curl http://dmitryblotsky.com/mtgdata/AllSets.json -f -o $@
 	./format_json.py $@
 
-install: download
+install: download default-collection
 	sudo ln -f -s $(PWD)/mtg.py /usr/bin/mtg
+
+default-collection: data/collections/sample.mtgcollection
+	ln -s -f `pwd`/data/collections/sample.mtgcollection data/collections/default.mtgcollection
 
 clean:
 	$(RM) *.pyc
