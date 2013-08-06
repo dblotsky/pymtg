@@ -5,30 +5,39 @@ import difflib
 
 from transaction import Transaction
 
+# config
+SIMILARITY      = 0.6
+MAX_NUM_MATCHES = 100
+
 def list_cards(args, context):
     print context.get_collection()
 
 def present_card_choices(target, matches):
 
-    if len(matches) == 1:
+    if len(matches) == 0:
+        return None
 
-        print "Found matching card:", matches[0]
+    elif len(matches) == 1:
 
-        if prompt_user("Is this the card you wanted?") is False:
+        print u"Found matching card:", matches[0]
+
+        if prompt_user(u"Is this the card you wanted?") is False:
             return None
         else:
             return matches[0]
 
     else:
 
-        print "Found more than one cards that match:"
+        print u"Found more than one cards that match:"
 
         for i, card in enumerate(matches):
-            print "    [{i}]: {card}".format(i=(i + 1), card=card)
+            print u"    [{i}]: {card}".format(i=(i + 1), card=card)
+
+        print u"NOTE: only up to {limit} cards are displayed.".format(limit=MAX_NUM_MATCHES)
 
         while True:
 
-            answer = raw_input("Please choose a card, or 'n' to reject all. [1 - {top}, n]: ".format(top=len(matches)))
+            answer = raw_input(u"Please choose a card, or 'n' to reject all. [1 - {top}, n]: ".format(top=len(matches)))
 
             if answer == "n":
                 return None
@@ -46,60 +55,82 @@ def prompt_user(question):
 
     while True:
 
-        answer = raw_input(question + " [Y/n]: ")
+        answer = raw_input(question + u" [Y/n]: ")
 
         if answer == "Y":
             return True
         elif answer == "n":
             return False
 
-def add_card(args, context):
+def fuzzy_search(needle, haystack):
 
-    # get parameters
-    card_name     = args.title
-    card_quantity = args.num
+    matches = difflib.get_close_matches(needle, haystack, n=MAX_NUM_MATCHES, cutoff=SIMILARITY)
 
-    # get collection
-    collection = context.get_collection()
+    # if exact match found, use it
+    if needle in matches:
+        return needle
+
+    # prompt for inexact match
+    chosen_name = present_card_choices(needle, matches)
+    if chosen_name is not None:
+        return chosen_name
+
+    return None
+
+def find_card(name, context, should_search_lib=True):
 
     # flag to say that a search needs to happen
     still_searching = True
 
-    # don't search if the card is already in the collection
-    if card_name in collection.get_cards():
-
-        chosen_card_name = card_name
-        still_searching  = False
-
     # first check collection
     if still_searching:
 
-        matching_cards_in_collection = difflib.get_close_matches(card_name, collection.get_cards().keys())
-        chosen_card_name             = present_card_choices(card_name, matching_cards_in_collection)
+        chosen_name = fuzzy_search(name, context.get_collection().get_cards().keys())
 
-        if chosen_card_name is not None:
+        if chosen_name is not None:
             still_searching = False
 
     # then check the library
-    if still_searching:
+    if still_searching and should_search_lib:
 
-        if prompt_user("Do you want to escalate the search to the MTG library?") is False:
+        if prompt_user(u"Card not found in collection. Do you want to escalate the search to the MTG library?") is False:
             return
 
-        # check card library
-        card_library              = context.get_card_library()
-        matching_cards_in_library = difflib.get_close_matches(card_name, card_library.keys())
-        chosen_card_name          = present_card_choices(card_name, matching_cards_in_library)
+        chosen_name = fuzzy_search(name, context.get_card_library().keys())
 
-        if chosen_card_name is not None:
+        if chosen_name is not None:
             still_searching = False
 
     if still_searching:
-        print "Card not found."
-        return
+        return None
 
-    # add the card
-    collection.add(chosen_card_name, card_quantity)
+    return chosen_name
+
+def add_card(args, context):
+
+    card_name     = find_card(name=args.title, context=context, should_search_lib=True)
+    card_quantity = args.num
+
+    if card_name is None:
+        print u"Card not found."
+
+    else:
+
+        # add the card
+        context.get_collection().add(card_name, card_quantity)
+
+def remove_card(args, context):
+
+    card_name     = find_card(name=args.title, context=context, should_search_lib=False)
+    card_quantity = args.num
+
+    if card_name is None:
+        print u"Card not found."
+
+    else:
+
+        # add the card
+        context.get_collection().remove(card_name, card_quantity)
 
 def parse_args():
     main_parser = argparse.ArgumentParser(

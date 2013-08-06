@@ -1,6 +1,7 @@
 import json
 
 from collection import Collection
+from card import Card
 
 class Transaction(object):
 
@@ -12,13 +13,21 @@ class Transaction(object):
     def get_card_library(self):
 
         if self.__card_library is None:
-            self.__card_library = {
-                "Lol": 3,
-                "Indes": 3,
-                "Loladasd": 3,
-                "Fleeng": 3,
-            }
-            # with open()
+
+            with open("data/AllSets.json") as library_file:
+                library_json = json.loads(library_file.read())
+
+            # retrieve just the cards
+            cards = []
+            for card_set in library_json.values():
+                cards.extend(card_set["cards"])
+
+            # map the cards to themselves
+            self.__card_library = {}
+            for card in cards:
+
+                card_name = card["name"]
+                self.__card_library[card_name] = Card(card_name, card)
 
         return self.__card_library
 

@@ -3,7 +3,7 @@ class Collection(object):
     A Magic: The Gathering card collection.
     """
 
-    def __init__(self, name="Unnamed Collection", cards=None):
+    def __init__(self, name=u"Unnamed Collection", cards=None):
 
         super(Collection, self).__init__()
 
@@ -14,20 +14,26 @@ class Collection(object):
         self.__cards = cards
 
     def __str__(self):
+        return unicode(self)
 
-        return_string = "Cards in {name}:\n".format(name=self.get_name())
+    def __repr__(self):
+        return unicode(self)
+
+    def __unicode__(self):
+
+        return_string = u"Cards in {name}:\n".format(name=self.get_name())
 
         if len(self.__cards) == 0:
-            return_string += "No cards."
+            return_string += u"No cards."
 
         else:
             cards_as_strings = []
 
             # format the cards
             for card_name, card_quantity in self.__cards.items():
-                cards_as_strings.append("    {name}: {quantity}".format(name=card_name, quantity=card_quantity))
+                cards_as_strings.append(u"    {name}: {quantity}".format(name=card_name, quantity=card_quantity))
 
-            return_string += "\n".join(cards_as_strings)
+            return_string += u"\n".join(cards_as_strings)
 
         return return_string
 
@@ -38,7 +44,7 @@ class Collection(object):
         else:
             self.__cards[card_name] = quantity
 
-        print "added {0} of {1}".format(quantity, card_name)
+        print u"added {0} of {1}".format(quantity, card_name)
 
     def get_name(self):
         return self.__name
