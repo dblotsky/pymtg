@@ -8,7 +8,7 @@ def list_cards(args, context):
     print context.collection
 
 def add_card(args, context):
-    context.collection.add("Indesctuctibility", args.num)
+    context.collection.add(args.title, args.num)
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
