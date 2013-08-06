@@ -35,6 +35,7 @@ def parse_args():
         'add',
         help='Adds a new card',
     )
+    add_card_parser.add_argument('title')
     add_card_parser.add_argument('-n', '--number', type=int, dest='num', default=1)
     add_card_parser.set_defaults(func=add_card)
 
