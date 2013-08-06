@@ -15,3 +15,6 @@ class Card(object):
 
     def get_name(self):
         return self.__name
+
+    def get_extra_data(self):
+        return self.__extra_data

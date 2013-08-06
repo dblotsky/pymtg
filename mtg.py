@@ -48,7 +48,6 @@ def present_card_choices(target, matches):
             except (ValueError, KeyError):
                 pass
 
-
         return None
 
 def prompt_user(question):
