@@ -141,8 +141,11 @@ def remove_card(args, context):
 
     else:
 
-        # add the card
-        context.get_collection().remove(card_name, card_quantity, args.remove_all)
+        # remove the card
+        if args.force:
+            context.get_collection().forget(card_name)
+        else:
+            context.get_collection().remove(card_name, card_quantity, remove_all=args.remove_all)
 
 def parse_args():
     main_parser = argparse.ArgumentParser(
