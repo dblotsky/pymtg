@@ -253,7 +253,7 @@ def parse_args():
     init_parser.set_defaults(func=add_collection)
 
     # switch
-    switch_parser = subparsers.add_parser('switch', help="Switched collections")
+    switch_parser = subparsers.add_parser('switch', help="Switches collections")
     switch_parser.add_argument('new_collection_name', metavar='collection_name')
     switch_parser.set_defaults(func=switch_collection)
 
