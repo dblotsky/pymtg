@@ -163,7 +163,7 @@ def parse_args():
         'help',
         help='Show this help message',
     )
-    help_parser.set_defaults(func=lambda args: main_parser.print_help())
+    help_parser.set_defaults(func=lambda args, context: main_parser.print_help())
 
     cards_parser = main_parser.subparsers.add_parser(
         'cards',
