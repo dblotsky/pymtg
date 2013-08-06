@@ -1,2 +1,4 @@
 *.json
 *.mtgcollection
+!default.mtgcollection
+!sample.mtgcollection
