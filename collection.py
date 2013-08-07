@@ -78,7 +78,7 @@ class Collection(object):
                 if color in histogram:
                     histogram[color] += self.count(card_name)
                 else:
-                    histogram[color] = 1
+                    histogram[color] = self.count(card_name)
 
         return histogram
 
