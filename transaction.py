@@ -1,8 +1,17 @@
 import json
+import sys
 
 from collection import Collection
 from card import Card
 from library import Library
+
+# directories
+DATA_DIR       = sys.prefix + "/data/"
+COLLECTION_DIR = DATA_DIR + "collections/"
+
+# files
+DATA_FILE               = DATA_DIR + "AllSets.json"
+DEFAULT_COLLECTION_FILE = COLLECTION_DIR + "default.mtgcollection"
 
 class Transaction(object):
 
@@ -16,7 +25,7 @@ class Transaction(object):
         if self.__card_library is None:
 
             # read the lbirary
-            with open("data/AllSets.json") as library_file:
+            with open(DATA_FILE) as library_file:
                 library_json = json.loads(library_file.read())
 
             # retrieve the card data
@@ -60,7 +69,7 @@ class Transaction(object):
     def load(self):
 
         # read the collection
-        with open("data/collections/default.mtgcollection", "r") as collection_file:
+        with open(DEFAULT_COLLECTION_FILE, "r") as collection_file:
             collection_as_json = json.loads(collection_file.read())
 
         # get name
@@ -87,7 +96,7 @@ class Transaction(object):
         collection_as_json = json.dumps(output_dict, indent=4)
 
         # output the data
-        with open("data/collections/default.mtgcollection", "w") as collection_file:
+        with open(DEFAULT_COLLECTION_FILE, "w") as collection_file:
             collection_file.write(collection_as_json)
 
     def reset(self):
