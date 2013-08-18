@@ -2,3 +2,4 @@
 *.xml
 *.sqlite
 *.sqlite3
+*.pymtg-settings

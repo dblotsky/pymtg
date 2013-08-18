@@ -9,6 +9,12 @@ setup(
     author       = 'Serghei Filippov, Dmitry Blotsky',
     author_email = 'saevon.kyomae@gmail.com, dmitry.blotsky@gmail.com',
     url          = 'https://github.com/dblotsky/pymtg',
-    py_modules   = ['card', 'collection', 'deck', 'format_json', 'graph', 'library', 'transaction', 'mtg'],
-    scripts      = ['mtg']
+    packages     = ['pymtg', 'pymtg.data'],
+    scripts      = ['pymtg/mtg.py'],
+    package_data = {
+        'pymtg': [
+            'pymtg/data/*.json'
+            'pymtg/data/collections/*.json'
+        ]
+    },
 )

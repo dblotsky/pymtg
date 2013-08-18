@@ -6,29 +6,31 @@ usage help:
 	@echo "    make uninstall - undoes the actions of 'make install'"
 	@echo "    make reinstall - uninstalls and then reinstalls"
 	@echo ""
-	@echo "    make download  - downloads the Magic: The Gathering card database found on http://mtgjson.com/"
+	@echo "    make databank  - downloads the Magic: The Gathering card database found on http://mtgjson.com/"
 	@echo ""
 	@echo "    make clean     - clean up some generated files"
 	@echo ""
 
-download: data/AllSets.json data/AllSets-x.json
+databank: pymtg/data/AllSets.json pymtg/data/AllSets-x.json
 
-data/AllSets.json data/AllSets-x.json:
+PRIVILEGED:
+	@echo "requiring root privileges ..."
+	@sudo -v
+
+pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
+	sudo ls > /dev/null
 	curl http://dmitryblotsky.com/mtgdata/AllSets.json -f -o $@
-	./format_json.py $@
+	./bin/format_json.py $@
 
-install: download default-collection
-	sudo ln -f -s $(PWD)/mtg.py /usr/bin/mtg
+install: PRIVILEGED databank
+	sudo python setup.py install
 
-uninstall:
-	sudo $(RM) /usr/bin/mtg
+uninstall: PRIVILEGED
+	yes | sudo pip uninstall pymtg
 
 reinstall: uninstall install
-
-default-collection: data/collections/sample.mtgcollection
-	ln -s -f `pwd`/data/collections/sample.mtgcollection data/collections/default.mtgcollection
 
 clean:
 	$(RM) *.pyc
 
-.PHONY: clean uninstall reinstall install download
+.PHONY: clean uninstall reinstall install download PRIVILEGED

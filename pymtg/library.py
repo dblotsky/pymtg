@@ -1,6 +1,6 @@
 import json
 
-from card import Card
+from pymtg.card import Card
 
 class Library(object):
     """

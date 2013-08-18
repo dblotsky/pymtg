@@ -6,8 +6,9 @@ import os
 import sys
 
 from subprocess import call
-from collection import Collection
-from transaction import Transaction
+from pymtg.collection import Collection
+from pymtg.transaction import Transaction
+from pymtg.data import COLLECTION_DIR
 
 # config
 SIMILARITY      = 0.6
@@ -181,10 +182,10 @@ def add_collection(args, context):
 
 def relink_default_collection(args, context, new_collection):
     """
-    Switches the default.mtgcollection symlink to point to the specified collection.
+    Switches the current.mtgcollection symlink to point to the specified collection.
     """
 
-    path_prefix         = "data/collections/"
+    path_prefix         = COLLECTION_DIR + "/"
     new_collection_path = "{pwd}/{prefix}/{name}.mtgcollection".format(pwd=os.getcwd(), prefix=path_prefix, name=new_collection)
 
     # check if the collection exists
@@ -203,7 +204,7 @@ def relink_default_collection(args, context, new_collection):
     call([
         "ln", "-s", "-f",
         new_collection_path,
-        path_prefix + "default.mtgcollection"
+        path_prefix + "current.mtgcollection"
     ])
 
 def switch_collection(args, context):
@@ -220,7 +221,7 @@ def list_collections(args, context):
 
     print "Available collections:"
 
-    for collection in os.listdir("data/collections"):
+    for collection in os.listdir(COLLECTION_DIR):
 
         if ".mtgcollection" in collection:
             print "   {name}".format(name=collection.replace(".mtgcollection", ""))

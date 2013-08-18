@@ -1,4 +1,4 @@
-from graph import bar_graph
+from pymtg.graph import bar_graph
 
 class Collection(object):
     """

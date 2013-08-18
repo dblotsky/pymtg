@@ -1,17 +1,13 @@
 import json
 import sys
 
-from collection import Collection
-from card import Card
-from library import Library
-
-# directories
-DATA_DIR       = sys.prefix + "/data/"
-COLLECTION_DIR = DATA_DIR + "collections/"
+from pymtg.collection import Collection
+from pymtg.card import Card
+from pymtg.library import Library
+from pymtg.data import LIBRARY_FILE, COLLECTION_DIR
 
 # files
-DATA_FILE               = DATA_DIR + "AllSets.json"
-DEFAULT_COLLECTION_FILE = COLLECTION_DIR + "default.mtgcollection"
+DEFAULT_COLLECTION_FILE = COLLECTION_DIR + "/current.mtgcollection"
 
 class Transaction(object):
 
@@ -25,7 +21,7 @@ class Transaction(object):
         if self.__card_library is None:
 
             # read the lbirary
-            with open(DATA_FILE) as library_file:
+            with open(LIBRARY_FILE) as library_file:
                 library_json = json.loads(library_file.read())
 
             # retrieve the card data
