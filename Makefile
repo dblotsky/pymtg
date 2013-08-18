@@ -18,7 +18,6 @@ PRIVILEGED:
 	@sudo -v
 
 pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
-	sudo ls > /dev/null
 	curl http://dmitryblotsky.com/mtgdata/AllSets.json -f -o $@
 	./bin/format_json.py $@
 
@@ -30,7 +29,9 @@ uninstall: PRIVILEGED
 
 reinstall: uninstall install
 
-clean:
+clean: PRIVILEGED
 	$(RM) *.pyc
+	sudo $(RM) -r build
+	sudo $(RM) -r dist
 
 .PHONY: clean uninstall reinstall install download PRIVILEGED
