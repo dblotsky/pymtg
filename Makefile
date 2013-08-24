@@ -24,6 +24,9 @@ pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
 install: PRIVILEGED databank
 	sudo python setup.py install
 
+develop: PRIVILEGED databank
+	sudo python setup.py develop
+
 uninstall: PRIVILEGED
 	yes | sudo pip uninstall pymtg
 
@@ -33,5 +36,6 @@ clean: PRIVILEGED
 	$(RM) *.pyc
 	sudo $(RM) -r build
 	sudo $(RM) -r dist
+	sudo $(RM) -r *.egg-info
 
 .PHONY: clean uninstall reinstall install download PRIVILEGED

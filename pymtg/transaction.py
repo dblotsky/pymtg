@@ -1,13 +1,12 @@
 import json
 import sys
+import os.path
 
 from pymtg.collection import Collection
 from pymtg.card import Card
 from pymtg.library import Library
-from pymtg.data import LIBRARY_FILE, COLLECTION_DIR
-
-# files
-DEFAULT_COLLECTION_FILE = COLLECTION_DIR + "/current.mtgcollection"
+from pymtg.utils import json_file_as_dict
+from pymtg.data import get_setting, LIBRARY_FILE, COLLECTION_DIR, SETTING_COLLECTION, COLLECTION_EXTENSION
 
 class Transaction(object):
 
@@ -65,8 +64,9 @@ class Transaction(object):
     def load(self):
 
         # read the collection
-        with open(DEFAULT_COLLECTION_FILE, "r") as collection_file:
-            collection_as_json = json.loads(collection_file.read())
+        collection_file_name     = get_setting(SETTING_COLLECTION) + COLLECTION_EXTENSION
+        collection_file_location = os.path.join(COLLECTION_DIR, collection_file_name)
+        collection_as_json       = json_file_as_dict(collection_file_location)
 
         # get name
         collection_name = collection_as_json["name"]
@@ -92,7 +92,7 @@ class Transaction(object):
         collection_as_json = json.dumps(output_dict, indent=4)
 
         # output the data
-        with open(DEFAULT_COLLECTION_FILE, "w") as collection_file:
+        with open(os.path.join(COLLECTION_DIR, (get_setting(SETTING_COLLECTION) + COLLECTION_EXTENSION)), "w") as collection_file:
             collection_file.write(collection_as_json)
 
     def reset(self):
