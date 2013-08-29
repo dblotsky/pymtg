@@ -8,7 +8,7 @@ import sys
 from subprocess import call
 from pymtg.collection import Collection
 from pymtg.transaction import Transaction
-from pymtg.data import COLLECTION_DIR
+from pymtg.data import COLLECTION_DIR, COLLECTION_EXTENSION
 
 # config
 SIMILARITY      = 0.6
@@ -159,53 +159,24 @@ def remove_card(args, context):
 def add_collection(args, context):
 
     new_collection_title = args.new_collection_name
-    new_collection_file = "data/collections/" + new_collection_title + ".mtgcollection"
+    new_collection_file  = os.path.join(COLLECTION_DIR, (new_collection_title + COLLECTION_EXTENSION))
 
-    # check if the collection already exists
+    # bail if the collection already exists
     try:
         with open(new_collection_file, "r") as f:
             print "Collection already exists."
         return
 
+    # if we couldn't open collection file, it doesn't exist
     except IOError:
         pass
 
     # create the new collection file
     call(["touch", new_collection_file])
 
-    # relink the default collection file
-    relink_default_collection(args, context, new_collection_title)
-
     # create the collection itself
     new_collection = Collection(None, new_collection_title)
     context.set_collection(new_collection)
-
-def relink_default_collection(args, context, new_collection):
-    """
-    Switches the current.mtgcollection symlink to point to the specified collection.
-    """
-
-    path_prefix         = COLLECTION_DIR + "/"
-    new_collection_path = "{pwd}/{prefix}/{name}.mtgcollection".format(pwd=os.getcwd(), prefix=path_prefix, name=new_collection)
-
-    # check if the collection exists
-    try:
-        with open(new_collection_path, "r") as f:
-            pass
-
-    except IOError:
-        print "Collection doesn't exist."
-        return
-
-    # reset the context so that it doesn't write the old collection to the new file
-    context.reset()
-
-    # re-link the default collection
-    call([
-        "ln", "-s", "-f",
-        new_collection_path,
-        path_prefix + "current.mtgcollection"
-    ])
 
 def switch_collection(args, context):
 
@@ -219,12 +190,18 @@ def switch_collection(args, context):
 
 def list_collections(args, context):
 
+    files_in_collection_dir = os.listdir(COLLECTION_DIR)
+
+    if len(files_in_collection_dir) == 0:
+        print "No collections."
+        return
+
     print "Available collections:"
 
-    for collection in os.listdir(COLLECTION_DIR):
+    for file_name in files_in_collection_dir:
 
-        if ".mtgcollection" in collection:
-            print "   {name}".format(name=collection.replace(".mtgcollection", ""))
+        if COLLECTION_EXTENSION in file_name:
+            print "   " + file_name.replace(COLLECTION_EXTENSION, "")
 
 def parse_args():
 

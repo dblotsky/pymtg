@@ -1,12 +1,17 @@
+# variables
+CACHED_DB = "http://dmitryblotsky.com/mtgdata/AllSets.json"
+
+# rules
 usage help:
 	@echo ""
 	@echo "Usage:"
 	@echo ""
-	@echo "    make install   - adds the program to the system path (requires root privileges)"
+	@echo "    make install   - installs pymtg, invokable via 'mtg.py' (requires root privileges)"
+	@echo "    make develop   - same as 'make install', but uses the existing source as the install source"
 	@echo "    make uninstall - undoes the actions of 'make install'"
 	@echo "    make reinstall - uninstalls and then reinstalls"
 	@echo ""
-	@echo "    make databank  - downloads the Magic: The Gathering card database found on http://mtgjson.com/"
+	@echo "    make databank  - downloads the Magic: The Gathering card database found on http://mtgjson.com/ (cached at $(CACHED_DB))"
 	@echo ""
 	@echo "    make clean     - clean up some generated files"
 	@echo ""
@@ -18,24 +23,24 @@ PRIVILEGED:
 	@sudo -v
 
 pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
-	curl http://dmitryblotsky.com/mtgdata/AllSets.json -f -o $@
+	curl $(CACHED_DB) -f -o $@
 	./bin/format_json.py $@
 
-install: PRIVILEGED databank
-	sudo python setup.py install
+install: databank
+	python setup.py install
 
-develop: PRIVILEGED databank
-	sudo python setup.py develop
+develop: databank
+	python setup.py develop
 
-uninstall: PRIVILEGED
-	yes | sudo pip uninstall pymtg
+uninstall:
+	yes | pip uninstall pymtg
 
 reinstall: uninstall install
 
-clean: PRIVILEGED
+clean:
 	$(RM) *.pyc
-	sudo $(RM) -r build
-	sudo $(RM) -r dist
-	sudo $(RM) -r *.egg-info
+	$(RM) -r build
+	$(RM) -r dist
+	$(RM) -r *.egg-info
 
-.PHONY: clean uninstall reinstall install download PRIVILEGED
+.PHONY: clean uninstall develop reinstall install databank
