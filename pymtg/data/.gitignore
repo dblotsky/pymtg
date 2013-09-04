@@ -4,3 +4,4 @@
 *.sqlite3
 *.pymtg-settings
 !default.pymtg-settings
+!preferences.pymtg-settings

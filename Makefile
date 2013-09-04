@@ -15,9 +15,9 @@ usage help:
 	@echo "    make clean     - clean up some generated files"
 	@echo ""
 
-databank: pymtg/data/AllSets.json pymtg/data/AllSets-x.json
+databank: pymtg/data/AllSets.json
 
-pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
+pymtg/data/AllSets.json:
 	curl $(CACHED_DB) -f -o $@
 	./bin/format_json.py $@
 
