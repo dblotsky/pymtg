@@ -1,6 +1,8 @@
 #! /usr/bin/python
 
-from setuptools import setup
+import os
+
+from distutils.core import setup
 
 setup(
     name         = 'PyMTG',
@@ -16,8 +18,11 @@ setup(
         'pymtg': [
             'data/*.json',
             'data/*.pymtg-settings',
-            'data/collections/*.json',
         ]
     },
-    data_files = [('pymtg/data/collections', ['.gitignore'])],
+    data_files = [
+        (os.path.expanduser('~/.pymtg/collections'), ['pymtg/data/collections/sample.mtgcollection']),
+        (os.path.expanduser('~/.pymtg/decks'), ['pymtg/data/decks/sample.mtgdeck']),
+        (os.path.expanduser('~/.pymtg'), ['pymtg/data/preferences.pymtg-settings']),
+    ]
 )

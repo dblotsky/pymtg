@@ -18,10 +18,6 @@ usage help:
 
 databank: pymtg/data/AllSets.json pymtg/data/AllSets-x.json
 
-PRIVILEGED:
-	@echo "requiring root privileges ..."
-	@sudo -v
-
 pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
 	curl $(CACHED_DB) -f -o $@
 	./bin/format_json.py $@

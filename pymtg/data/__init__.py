@@ -3,13 +3,14 @@ import os.path
 from pymtg.utils import json_file_as_dict, json_dict_to_file
 
 # directories
-DATA_DIR       = os.path.dirname(__file__)
-COLLECTION_DIR = os.path.join(DATA_DIR, "collections")
+USER_DATA_DIR   = os.path.expanduser("~/.pymtg")
+GLOBAL_DATA_DIR = os.path.dirname(__file__)
+COLLECTION_DIR  = os.path.join(USER_DATA_DIR, "collections")
 
 # files
-LIBRARY_FILE          = os.path.join(DATA_DIR, "AllSets.json")
-SETTINGS_FILE         = os.path.join(DATA_DIR, "preferences.pymtg-settings")
-DEFAULT_SETTINGS_FILE = os.path.join(DATA_DIR, "default-settings.json")
+LIBRARY_FILE          = os.path.join(GLOBAL_DATA_DIR, "AllSets.json")
+SETTINGS_FILE         = os.path.join(USER_DATA_DIR, "preferences.pymtg-settings")
+DEFAULT_SETTINGS_FILE = os.path.join(GLOBAL_DATA_DIR, "default-settings.json")
 
 # setting names
 SETTING_COLLECTION = "current_collection"
