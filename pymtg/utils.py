@@ -7,5 +7,5 @@ def json_file_as_dict(file_name):
 
 def json_dict_to_file(file_name, target_dict):
 
-    with open(file_name, "r") as json_file:
+    with open(file_name, "w+") as json_file:
         json.dump(target_dict, json_file)

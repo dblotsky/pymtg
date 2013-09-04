@@ -8,7 +8,7 @@ import sys
 from subprocess import call
 from pymtg.collection import Collection
 from pymtg.transaction import Transaction
-from pymtg.data import COLLECTION_DIR, COLLECTION_EXTENSION
+from pymtg.data import SETTING_COLLECTION, COLLECTION_DIR, COLLECTION_EXTENSION, get_setting, set_setting
 
 # config
 SIMILARITY      = 0.6
@@ -178,30 +178,37 @@ def add_collection(args, context):
     new_collection = Collection(None, new_collection_title)
     context.set_collection(new_collection)
 
+def get_all_collection_names():
+
+    files_in_collection_dir = os.listdir(COLLECTION_DIR)
+    collection_files_in_dir = filter(lambda x: (COLLECTION_EXTENSION in x), files_in_collection_dir)
+    collection_names_only = map(lambda x: x.replace(COLLECTION_EXTENSION, ""), collection_files_in_dir)
+
+    return collection_names_only
+
 def switch_collection(args, context):
 
-    new_collection_name = args.new_collection_name
+    new_collection_name  = args.new_collection_name
+    all_collection_names = get_all_collection_names()
 
-    if new_collection_name == "default":
-        print "Cannot switch default collection to default collection."
+    if new_collection_name not in all_collection_names:
+        print "No such collection."
         return
 
-    relink_default_collection(args, context, args.new_collection_name)
+    set_setting(SETTING_COLLECTION, new_collection_name)
 
 def list_collections(args, context):
 
-    files_in_collection_dir = os.listdir(COLLECTION_DIR)
+    all_collection_names = get_all_collection_names()
 
-    if len(files_in_collection_dir) == 0:
+    if len(all_collection_names) == 0:
         print "No collections."
         return
 
     print "Available collections:"
 
-    for file_name in files_in_collection_dir:
-
-        if COLLECTION_EXTENSION in file_name:
-            print "   " + file_name.replace(COLLECTION_EXTENSION, "")
+    for collection_name in all_collection_names:
+        print "   " + collection_name
 
 def parse_args():
 

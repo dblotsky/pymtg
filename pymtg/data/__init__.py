@@ -30,6 +30,17 @@ def get_setting(setting_name):
 
     return __settings[setting_name]
 
+def set_setting(setting_name, value):
+
+    global __settings
+
+    if __settings is None:
+        load_settings()
+
+    if (setting_name not in __settings) or (__settings[setting_name] != value):
+        __settings[setting_name] = value
+        save_settings()
+
 def load_settings():
 
     global __settings
@@ -41,3 +52,9 @@ def load_settings():
 
     # load the settings
     __settings = json_file_as_dict(SETTINGS_FILE)
+
+def save_settings():
+
+    global __settings
+
+    json_dict_to_file(SETTINGS_FILE, __settings)
