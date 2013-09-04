@@ -7,7 +7,6 @@ usage help:
 	@echo "Usage:"
 	@echo ""
 	@echo "    make install   - installs pymtg, invokable via 'mtg.py' (requires root privileges)"
-	@echo "    make develop   - same as 'make install', but uses the existing source as the install source"
 	@echo "    make uninstall - undoes the actions of 'make install'"
 	@echo "    make reinstall - uninstalls and then reinstalls"
 	@echo ""
@@ -24,9 +23,6 @@ pymtg/data/AllSets.json pymtg/data/AllSets-x.json:
 
 install: databank
 	python setup.py install
-
-develop: databank
-	python setup.py develop
 
 uninstall:
 	yes | pip uninstall pymtg

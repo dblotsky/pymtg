@@ -1,30 +1,26 @@
 # PyMTG
 
-This is a command-line utility to manage a Magic: The Gathering card collection.
+This is a command-line utility to manage a Magic: The Gathering card collection. It currently only has minimal functionality: creating card collections, switching among them, adding and removing cards to/from them, and viewing the cards in them.
 
 ## Installing
 
-To install, simply run the following (requires root privilege):
+To install, simply run the following (might require `sudo`):
 
     make install
 
-The `install` target forcefully (`-f` option) creates a symbolic link, `/usr/bin/mtg`, to the main pymtg executable, `mtg.py`. It also downloads a copy of the Magic: The Gathering card database. The download can also be carried out independently by running:
+The installation downloads a copy of the Magic: The Gathering card database, and then installs the Python package using setuptools. The data download can also be carried out independently by running:
 
     make download
-
-If permissions are a problem when executing, let `mtg.py` be executable by running:
-
-    chmod +x mtg.py
 
 ## Running
 
 After installing, simply run:
 
-    mtg
+    mtg.py
 
-Cards can be added via:
+Help and command syntax can be viewed by running:
 
-    mtg add <card_name>
+    mtg.py help
 
 ## Data
 

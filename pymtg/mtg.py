@@ -243,7 +243,7 @@ def parse_args():
     switch_parser.set_defaults(func=switch_collection)
 
     # add
-    add_card_parser = subparsers.add_parser('add', help='Adds a new card')
+    add_card_parser = subparsers.add_parser('add', help='Adds cards to the current collection')
     add_card_parser.add_argument('title', metavar='card_name')
     add_card_parser.add_argument('-n', '--number',   type=int,            dest='num',      default=1,     help="How many cards to add (Default: 1)")
     add_card_parser.add_argument('-f', '--force',    action='store_true', dest='force',    default=False, help="Add the card, even if we don't find it in the library")
@@ -251,7 +251,7 @@ def parse_args():
     add_card_parser.set_defaults(func=add_card)
 
     # remove
-    remove_card_parser = subparsers.add_parser('remove', help='Removes cards from your collection',)
+    remove_card_parser = subparsers.add_parser('remove', help='Removes cards from the current collection',)
     remove_card_parser.add_argument('title', metavar='card_name')
     remove_card_parser.add_argument('-a', '--all',               action='store_true', dest='remove_all', default=False, help="Remove all copies of the card")
     remove_card_parser.add_argument('-n', '--number',            type=int,            dest='num',        default=1,     help="How many cards to remove (Default: 1)")
