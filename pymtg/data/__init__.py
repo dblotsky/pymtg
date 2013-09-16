@@ -13,7 +13,7 @@ SETTINGS_FILE         = os.path.join(USER_DATA_DIR, "preferences.pymtg-settings"
 DEFAULT_SETTINGS_FILE = os.path.join(GLOBAL_DATA_DIR, "default-settings.json")
 
 # setting names
-SETTING_COLLECTION = "current_collection"
+COLLECTION_SETTING = "current_collection"
 
 # extensions
 COLLECTION_EXTENSION = ".mtgcollection"
@@ -21,21 +21,46 @@ COLLECTION_EXTENSION = ".mtgcollection"
 # setting dict
 __settings = None
 
-def get_setting(setting_name):
+def __load_if_needed():
 
     global __settings
 
     if __settings is None:
         load_settings()
+
+def create_data_dirs():
+
+    if not os.path.exists(USER_DATA_DIR):
+        os.mkdir(USER_DATA_DIR)
+
+    if not os.path.exists(COLLECTION_DIR):
+        os.mkdir(COLLECTION_DIR)
+
+    if not os.path.exists(SETTINGS_FILE):
+        open(SETTINGS_FILE, "a").close()
+
+def setting_exists(setting_name):
+
+    global __settings
+    __load_if_needed()
+
+    return setting_name in __settings
+
+def get_setting(setting_name):
+
+    print "getting setting", setting_name
+
+    global __settings
+    __load_if_needed()
 
     return __settings[setting_name]
 
 def set_setting(setting_name, value):
 
-    global __settings
+    print "setting", setting_name, "to", value
 
-    if __settings is None:
-        load_settings()
+    global __settings
+    __load_if_needed()
 
     if (setting_name not in __settings) or (__settings[setting_name] != value):
         __settings[setting_name] = value

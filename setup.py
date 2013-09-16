@@ -20,9 +20,4 @@ setup(
             'data/*.pymtg-settings',
         ]
     },
-    data_files = [
-        (os.path.expanduser('~/.pymtg/collections'), ['pymtg/data/collections/sample.mtgcollection']),
-        (os.path.expanduser('~/.pymtg/decks'), ['pymtg/data/decks/sample.mtgdeck']),
-        (os.path.expanduser('~/.pymtg'), ['pymtg/data/preferences.pymtg-settings']),
-    ]
 )

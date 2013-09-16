@@ -8,7 +8,7 @@ import sys
 from subprocess import call
 from pymtg.collection import Collection
 from pymtg.transaction import Transaction
-from pymtg.data import SETTING_COLLECTION, COLLECTION_DIR, COLLECTION_EXTENSION, get_setting, set_setting
+from pymtg.data import COLLECTION_SETTING, COLLECTION_DIR, COLLECTION_EXTENSION, get_setting, set_setting, setting_exists, create_data_dirs
 
 # config
 SIMILARITY      = 0.6
@@ -20,7 +20,14 @@ It can keep track of several collections and supports adding and removing cards.
 """
 
 def list_cards(args, context):
-    print context.get_collection()
+
+    collection = context.get_collection()
+
+    if collection is None:
+        print "No collection selected. Select one using the 'switch' command."
+
+    else:
+        print collection
 
 def present_card_choices(target, matches):
 
@@ -178,11 +185,15 @@ def add_collection(args, context):
     new_collection = Collection(None, new_collection_title)
     context.set_collection(new_collection)
 
+    # make the collection default if there is no default
+    if not setting_exists(COLLECTION_SETTING):
+        set_setting(COLLECTION_SETTING, new_collection_title)
+
 def get_all_collection_names():
 
     files_in_collection_dir = os.listdir(COLLECTION_DIR)
     collection_files_in_dir = filter(lambda x: (COLLECTION_EXTENSION in x), files_in_collection_dir)
-    collection_names_only = map(lambda x: x.replace(COLLECTION_EXTENSION, ""), collection_files_in_dir)
+    collection_names_only   = map(lambda x: x.replace(COLLECTION_EXTENSION, ""), collection_files_in_dir)
 
     return collection_names_only
 
@@ -195,7 +206,7 @@ def switch_collection(args, context):
         print "No such collection."
         return
 
-    set_setting(SETTING_COLLECTION, new_collection_name)
+    set_setting(COLLECTION_SETTING, new_collection_name)
 
 def list_collections(args, context):
 
@@ -266,6 +277,9 @@ def main():
 
     # parse the args and find which command to run
     args = parse_args()
+
+    # make sure that the data directories exist
+    create_data_dirs()
 
     # get the local data
     with Transaction() as context:

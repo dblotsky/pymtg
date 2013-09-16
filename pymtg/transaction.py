@@ -5,8 +5,8 @@ import os.path
 from pymtg.collection import Collection
 from pymtg.card import Card
 from pymtg.library import Library
-from pymtg.utils import json_file_as_dict
-from pymtg.data import get_setting, LIBRARY_FILE, COLLECTION_DIR, SETTING_COLLECTION, COLLECTION_EXTENSION
+from pymtg.utils import json_file_as_dict, json_dict_to_file
+from pymtg.data import get_setting, LIBRARY_FILE, COLLECTION_DIR, COLLECTION_SETTING, COLLECTION_EXTENSION
 
 class Transaction(object):
 
@@ -63,12 +63,20 @@ class Transaction(object):
 
     def load(self):
 
-        # read the collection
-        collection_file_name     = get_setting(SETTING_COLLECTION) + COLLECTION_EXTENSION
+        # read the collection name setting
+        try:
+            collection_file_name = get_setting(COLLECTION_SETTING) + COLLECTION_EXTENSION
+
+        # if the setting doesn't exist, load nothing
+        except KeyError:
+            self.__collection = None
+            return
+
+        # get collection
         collection_file_location = os.path.join(COLLECTION_DIR, collection_file_name)
         collection_as_json       = json_file_as_dict(collection_file_location)
 
-        # get name
+        # get collection name
         collection_name = collection_as_json["name"]
 
         # get cards
@@ -84,16 +92,17 @@ class Transaction(object):
         if self.__collection is None:
             return
 
+        collection_file_name     = get_setting(COLLECTION_SETTING) + COLLECTION_EXTENSION
+        collection_file_location = os.path.join(COLLECTION_DIR, collection_file_name)
+
         # serialise the data
         output_dict = {
             "name": self.__collection.get_name(),
             "cards": self.__collection.get_cards_with_quantities(),
         }
-        collection_as_json = json.dumps(output_dict, indent=4)
 
         # output the data
-        with open(os.path.join(COLLECTION_DIR, (get_setting(SETTING_COLLECTION) + COLLECTION_EXTENSION)), "w") as collection_file:
-            collection_file.write(collection_as_json)
+        json_dict_to_file(collection_file_location, output_dict)
 
     def reset(self):
         self.__collection = None
@@ -105,3 +114,8 @@ class Transaction(object):
 
     def __exit__(self, type, value, traceback):
         self.save()
+
+class NoSelectedCollection(Exception):
+
+    def __str__(self):
+        return "No collection selected in preferences."
